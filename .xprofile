@@ -1,0 +1,27 @@
+### Defaults
+export EDITOR="nvim"
+export TERMINAL="alacritty"
+export BROWSER="google-chrome-stable"
+
+### XDG Paths
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+
+### ZSH Config Dir
+export ZDOTDIR=$HOME/.config/zsh
+
+### Starship Prompt Config Dir
+export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
+
+### Compositor
+picom --experimental-backends -b
+
+### Wallpaper
+export WALLPAPERS_DIR=$HOME/Wallpapers
+export WALLPAPER=$HOME/.wallpaper
+
+### Layout US-INTL
+export GTK_IM_MODULE=cedilla
+setxkbmap -layout us -variant intl
+# RUN THIS: localectl set-keymap us-acentos
