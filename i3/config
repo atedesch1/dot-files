@@ -1,0 +1,392 @@
+# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+
+set $mod Mod4
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango:Hack Nerd Font 10
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+#font pango:DejaVu Sans Mono 8
+
+# Start XDG autostart .desktop files using dex. See also
+# https://wiki.archlinux.org/index.php/XDG_Autostart
+exec --no-startup-id dex --autostart --environment i3
+
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# screen before suspend. Use loginctl lock-session to lock your screen.
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# Network manager & Blueman
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
+
+# Use pactl to adjust volume in PulseAudio.
+set $refresh_i3status killall -SIGUSR1 i3status
+# bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+# bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-control --volume-max 130 --volume-step 10 up && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-control --volume-max 130 --volume-step 10 down && $refresh_i3status
+# bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pulseaudio-control togmute && $refresh_i3status
+# bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# exec --no-startup-id playerctld daemon # listen for last player used remove --player=spotify
+bindsym XF86AudioPlay exec --no-startup-id playerctl --player=spotify play-pause
+bindsym XF86AudioStop exec --no-startup-id playerctl --player=spotify pause
+bindsym XF86AudioPrev exec --no-startup-id playerctl --player=spotify previous
+bindsym XF86AudioNext exec --no-startup-id playerctl --player=spotify next
+
+# Use light for monitor and keyboard adjusting brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id light -A 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id light -U 5 # decrease screen brightness
+bindsym XF86KbdBrightnessUp exec --no-startup-id light -k -A 5
+bindsym XF86KbdBrightnessDown exec --no-startup-id light -k -U 5
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec alacritty
+
+# kill focused window
+bindsym $mod+q kill
+
+# start dmenu (a program launcher)
+#bindsym $mod+d exec --no-startup-id dmenu_run
+# A more modern dmenu replacement is rofi:
+#bindsym $mod+d exec "rofi -modi drun,run -show drun"
+# There also is i3-dmenu-desktop which only displays applications shipping a
+# .desktop file. It is a wrapper around dmenu, so you need that installed.
+# bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split orientation
+bindsym $mod+Mod1+Right split h
+bindsym $mod+Mod1+Down split v
+#bindsym $mod+Shift+Return split toggle
+
+# enter fullscreen mode for the focused container
+bindsym $mod+Shift+f fullscreen toggle
+
+# Change container layout (stacked, tabbed, toggle split)
+set $mode_layout Layout (s) stacking, (t) tabbed, (e) toggle split
+mode "$mode_layout" {
+    bindsym s layout stacking, mode "default"
+    bindsym t layout tabbed, mode "default"
+    bindsym e layout toggle split, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Ctrl+l mode "$mode_layout"
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+# bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# Switch to workspace with urgent window automatically
+for_window [urgent=latest] focus
+
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# custom workspace
+set $ws_spotify "MSC"
+set $ws_zoom "MET"
+set $ws_obs "REC"
+set $ws_postman "API"
+set $ws_term "SHL"
+set $ws_code "IDE"
+set $ws_mail "EML"
+
+# Navigate workspace one by one
+bindsym $mod+Ctrl+Right workspace next
+bindsym $mod+Ctrl+Left workspace prev
+
+# Move focused container to workspace one by one
+bindsym $mod+Ctrl+Shift+Right move container to workspace next
+bindsym $mod+Ctrl+Shift+Left move container to workspace prev
+# Switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# switch to workspace and launch app if not running
+bindsym $mod+s workspace $ws_spotify; exec --no-startup-id ~/.config/i3/scripts/launch_single.sh spotify
+bindsym $mod+z workspace $ws_zoom; exec --no-startup-id ~/.config/i3/scripts/launch_single.sh zoom
+bindsym $mod+o workspace $ws_obs; exec --no-startup-id ~/.config/i3/scripts/launch_single.sh obs
+bindsym $mod+p workspace $ws_postman; exec --no-startup-id ~/.config/i3/scripts/launch_single.sh postman
+bindsym $mod+m workspace $ws_mail; exec --no-startup-id ~/.config/i3/scripts/launch_single.sh thunderbird
+bindsym $mod+c workspace $ws_code
+bindsym $mod+t workspace $ws_term
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# bindsym $mod+Shift+s move container to workspace $ws_spotify
+bindsym $mod+Shift+z move container to workspace $ws_zoom
+# bindsym $mod+Shift+o move container to workspace $ws_obs
+bindsym $mod+Shift+c move container to workspace $ws_code
+bindsym $mod+Shift+t move container to workspace $ws_term
+bindsym $mod+Shift+p move container to workspace $ws_postman
+
+# Reload the configuration file
+# bindsym $mod+Shift+c reload
+
+# Restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+# Exit i3
+set $mode_system System (l) lock, (q) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3lock, mode "default"
+    bindsym q exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id i3lock && systemctl suspend, mode "default"
+    bindsym h exec --no-startup-id i3lock && systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id poweroff, mode "default"
+
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Escape mode "$mode_system"
+
+
+### Resize window
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 5 px or 5 ppt
+        bindsym k resize grow height 5 px or 5 ppt
+        bindsym l resize shrink height 5 px or 5 ppt
+        bindsym semicolon resize grow width 5 px or 5 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Down resize grow height 5 px or 5 ppt
+        bindsym Up resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+### Theme
+set $bg #282828
+set $red #cc241d
+set $green #98971a
+set $yellow #d79921
+set $blue #458588
+set $purple #b16286
+set $aqua #689d68
+set $gray #a89984
+set $darkgray #1d2021
+set $white #ffffff
+
+## green gruvbox
+## class                 border|backgr|text|indicator|child_border
+client.focused          $yellow $yellow $darkgray $purple $aqua
+client.focused_inactive $darkgray $darkgray $yellow $purple $darkgray
+client.unfocused        $darkgray $darkgray $yellow $purple $darkgray
+client.urgent           $red $red $white $red $red
+
+## blue gruvbox
+## class                 border|backgr|text|indicator|child_border
+#client.focused          $blue $blue $darkgray $purple $aqua
+#client.focused_inactive $darkgray $darkgray $yellow $purple $darkgray
+#client.unfocused        $darkgray $darkgray $yellow $purple $darkgray
+#client.urgent           $red $red $white $red $red
+
+### Polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
+### i3 Bar
+# bar {
+#     #position bottom
+#     position top
+#     status_command i3blocks
+#     mode dock
+#     #status_command i3blocks -c ~/.config/i3/i3blocks.conf
+#     colors {
+#         # bar background color
+#         background $bg
+#         # text color used for blocks that do not have a color specified.
+#         statusline $yellow
+#         # workspaces section            
+#         #                    border  backgr. text
+#         focused_workspace    $aqua $aqua $darkgray
+#         inactive_workspace   $darkgray $darkgray $yellow
+#         active_workspace     $darkgray $darkgray $yellow
+#         urgent_workspace     $red $red $bg
+#     }
+# }
+
+### Monitor configuration
+## Laptop Only
+exec_always xrandr --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --off --output DP-1-0 --off --output DP-1-1 --off
+## Benq+Laptop Vertical 
+#exec_always xrandr --output eDP-1 --primary --mode 1920x1080 --rate 144.0 --pos 0x1080 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --off --output DP-1-0 --mode 1920x1080 --rate 144.0 --pos 0x0 --rotate normal --output DP-1-1 --off
+## ASUS+Laptop Horizontal
+# exec_always xrandr --output eDP-1 --primary --mode 1920x1080 --rate 144.0 --pos 0x360 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --mode 2560x1440 --rate 144.01 --pos 1920x0 --rotate normal --output DP-1-0 --off --output DP-1-1 --off
+## TV
+#exec_always xrandr --output eDP-1 --off --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --mode 3840x2160 --pos 0x0 --rotate normal --output DP-1-0 --off --output DP-1-1 --off
+
+set $mode_monitor Monitor Setup (1) Laptop Only, (2) ASUS+Laptop Horizontal, (3) Benq+Laptop Vertical, (4) TV, (5) ASUS
+mode "$mode_monitor" {
+    bindsym 1 exec --no-startup-id xrandr --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --off --output DP-1-0 --off --output DP-1-1 --off, mode "default"
+    bindsym 2 exec --no-startup-id xrandr --output eDP-1 --primary --mode 1920x1080 --rate 144.0 --pos 0x360 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --mode 2560x1440 --rate 144.01 --pos 1920x0 --rotate normal --output DP-1-0 --off --output DP-1-1 --off, mode "default"
+    bindsym 3 exec --no-startup-id xrandr --output eDP-1 --primary --mode 1920x1080 --rate 144.0 --pos 0x1080 --rotate normal --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --off --output DP-1-0 --mode 1920x1080 --rate 144.0 --pos 0x0 --rotate normal --output DP-1-1 --off, mode "default"
+    bindsym 4 exec --no-startup-id xrandr --output eDP-1 --off --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --mode 3840x2160 --pos 0x0 --rotate normal --output DP-1-0 --off --output DP-1-1 --off, mode "default"
+    bindsym 5 exec --no-startup-id xrandr --output eDP-1 --off --output DP-1 --off --output DP-2 --off --output HDMI-1-0 --primary --mode 2560x1440 --rate 144.0 --pos 0x0 --rotate normal --output DP-1-0 --off --output DP-1-1 --off, mode "default"
+
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+m mode "$mode_monitor"
+
+### Touchpad Toggle
+bindsym $mod+Control+t exec --no-startup-id sh ~/.config/i3/scripts/toggle_touchpad.sh
+
+### Wallpaper
+# set $wallpaper $HOME/Wallpapers/white-videotapes.jpg
+# set $wallpaper $HOME/Wallpapers/mountains.jpg
+# set $wallpaper $HOME/Wallpapers/green_wings.jpg
+# set $wallpaper $HOME/Wallpapers/snake.jpg
+# set $wallpaper $HOME/Wallpapers/viper.jpg
+set $wallpaper $WALLPAPER
+exec_always feh --bg-scale $wallpaper
+
+### i3 Borders
+# new_window pixel 3
+new_float normal
+smart_borders on
+
+# REMOVE WHEN UPDATE FIX
+# default_border pixel 3
+# default_floating_border pixel 0
+for_window [class=".*"] border pixel 3
+# for_window [all] border pixel # REMOVE?
+
+### i3 Gaps
+gaps inner 4
+gaps outer 4
+# gaps top 0
+
+### Applications
+## Browser
+bindsym $mod+w exec google-chrome-stable
+## File Manager
+bindsym $mod+f exec alacritty -e ranger
+## Launcher
+bindsym $mod+d exec "rofi -modi drun,run -show drun"
+## IDE
+# bindsym $mod+c exec code
+
+# Screenshot
+set $mode_screenshot Screenshot (a) all, (w) window, (s) selection
+mode "$mode_screenshot" {
+    bindsym s exec --no-startup-id ~/.config/i3/scripts/screenshot.sh select, mode "default"
+    bindsym w exec --no-startup-id ~/.config/i3/scripts/screenshot.sh window, mode "default"
+    bindsym a exec --no-startup-id ~/.config/i3/scripts/screenshot.sh, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+s mode "$mode_screenshot"
+
+## Open applications on specific workspace
+assign [class="Spotify"] $ws_spotify
+assign [class="Zoom"] $ws_zoom
+assign [class="Postman"] $ws_postman
+assign [class="Mail"] $ws_mail
+
+## Open specific applications in floating mode (check class with xprop, WM_CLASS)
+for_window [class="zoom"] floating enable
+for_window [class="around"] floating enable
+for_window [class="Around"] floating enable
+# for_window [class="matplotlib"] floating enable
+# for_window [class="Matplotlib"] floating enable
+
+## Set Default Layout for some applications
+for_window [class="Code"] layout tabbed
+
+
+
+
+
+
+
+
+
+
+
