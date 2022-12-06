@@ -1,2 +1,3 @@
-# dot-files
+# Dot Files
+
 Configuration files for Arch Linux setup
